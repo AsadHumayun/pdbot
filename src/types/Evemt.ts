@@ -1,10 +1,9 @@
 import type { ClientEvents } from 'discord.js';
-import { z } from 'zod';
-import type { StructurePredicate } from '../util/loaders.js';
 
 /**
  * Defines the structure of an event.
  */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Event<EventName extends keyof ClientEvents = keyof ClientEvents> = {
 	/**
 	 * The function to execute when the event is emitted.
@@ -23,18 +22,3 @@ export type Event<EventName extends keyof ClientEvents = keyof ClientEvents> = {
 	 */
 	once?: boolean;
 };
-
-/**
- * Defines the schema for an event.
- */
-export const schema = z.object({
-	name: z.string(),
-	once: z.boolean().optional().default(false),
-	execute: z.function(),
-});
-
-/**
- * Defines the predicate to check if an object is a valid Event type.
- */
-export const predicate: StructurePredicate<Event> = (structure: unknown): structure is Event =>
-	schema.safeParse(structure).success;
