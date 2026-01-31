@@ -9,7 +9,6 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"target": "ESNext",
-		"outDir": "dist",
 		"skipLibCheck": true
 	}
 }
