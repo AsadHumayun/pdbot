@@ -8,9 +8,10 @@
 		"lib": ["DOM"],
 		"declaration": false,
 		"declarationMap": false,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"target": "ESNext",
+		"module": "node16",
+		"moduleResolution": "node16",
+		"target": "es2022",
 		"skipLibCheck": true
-	}
+	},
+	"include": ["src/**/*.ts"]
 }

@@ -6,5 +6,6 @@ export default {
 	once: true,
 	async execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
+		console.log(import.meta.dirname);
 	},
 } satisfies Event<Events.ClientReady>;

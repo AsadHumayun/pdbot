@@ -1,5 +1,7 @@
 import process from 'node:process';
 import { Client, GatewayIntentBits } from 'discord.js';
+import type { Event } from './types/Evemt.js';
+import { loadCommands } from './util/loadCommands.js';
 import { loadEvents } from './util/loadEvents.js';
 
 const client = new Client({
@@ -16,9 +18,9 @@ process.on('unhandledRejection', console.error);
 client.on('error', console.error);
 client.on('warn', console.warn);
 
-const events = await loadEvents(new URL('events/', import.meta.url));
+client.events = await loadEvents(new URL('events/', import.meta.url));
 
-events!.each((event) => {
+client.events!.each((event: Event) => {
 	client[event.once ? 'once' : 'on'](event.name, async (...args) => {
 		try {
 			await event.execute(...args);
@@ -27,5 +29,7 @@ events!.each((event) => {
 		}
 	});
 });
+
+client.commands = await loadCommands();
 
 void client.login(process.env.DISCORD_TOKEN);
