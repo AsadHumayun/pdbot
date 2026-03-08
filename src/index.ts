@@ -1,16 +1,26 @@
 import process from 'node:process';
-import { URL } from 'node:url';
 import { Client, GatewayIntentBits } from 'discord.js';
-import { loadEvents } from './util/loaders.js';
+import type { Event } from './types/Evemt.js';
+import { loadCommands } from './util/loadCommands.js';
+import { loadEvents } from './util/loadEvents.js';
 
-// Initialize the client
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+	],
+});
 
-// Load the events and commands
-const events = await loadEvents(new URL('events/', import.meta.url));
+process.on('uncaughtException', console.error);
+process.on('unhandledRejection', console.error);
+client.on('error', console.error);
+client.on('warn', console.warn);
 
-// Register the event handlers
-for (const event of events) {
+client.events = await loadEvents(new URL('events/', import.meta.url));
+
+client.events!.each((event: Event) => {
 	client[event.once ? 'once' : 'on'](event.name, async (...args) => {
 		try {
 			await event.execute(...args);
@@ -18,7 +28,8 @@ for (const event of events) {
 			console.error(`Error executing event ${String(event.name)}:`, error);
 		}
 	});
-}
+});
 
-// Login to the client
+client.commands = await loadCommands();
+
 void client.login(process.env.DISCORD_TOKEN);
